@@ -3,6 +3,7 @@ from flask import Flask, request, Response, jsonify
 import io
 import base64
 from PIL import Image
+import time
 
 app = Flask(__name__)
 
@@ -15,7 +16,7 @@ def GetLicenseDetails():
 			image = stringToImage(request.form["image"])
 			
 			# START -- Call the Image Processing algorithm
-			
+			time.sleep(3)
 			# END 	-- Call the Image Processing algorithm
 			
 			payload = {

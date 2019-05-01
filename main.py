@@ -76,8 +76,8 @@ def match_images(match, img , mini) :
 
 def cut_image(match_bottom_left , match_t , image) : 
     #plt.imshow(image)
-    x1,y1 = match_images(match_bottom_left , image , 0)
-    x2,y2 = match_images(match_t,image , 1)
+    x1,y1 = match_images(match_bottom_left , image , 1)
+    x2,y2 = match_images(match_t,image , 0)
     
     if y1 < y2 : 
         #print('...More Processing ....')

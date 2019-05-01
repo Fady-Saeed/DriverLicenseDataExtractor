@@ -173,4 +173,5 @@ def get_bounding_box(img):
 
 ## To get final image :-  img = get_bounding_box( cut_image(match_bottom , match_t , image ) )  
 ## Where match_bottom , match are the two images in images folder 
+## Apply cv2.pyrUp(img) to obtain smaller image to pass to OCR
 

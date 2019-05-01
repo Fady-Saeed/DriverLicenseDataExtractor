@@ -1,3 +1,6 @@
+
+
+## Imports
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,7 +18,7 @@ def match_images(match, img , mini) :
 
     matcher = cv2.BFMatcher()
     matches = matcher.knnMatch(des1 , des2 , k=2)
-    print(len(matches))
+    #print(len(matches))
     
     ## Choosing best matches
     best_matches = []
@@ -71,11 +74,8 @@ def match_images(match, img , mini) :
 
 
 
-## match_bottom_left and match_t -> 2 saved images (must be passed in order and in graysacle)
-## image -> license image
-## returns region of interest
-
 def cut_image(match_bottom_left , match_t , image) : 
+    #plt.imshow(image)
     x1,y1 = match_images(match_bottom_left , image , 0)
     x2,y2 = match_images(match_t,image , 1)
     
@@ -84,10 +84,11 @@ def cut_image(match_bottom_left , match_t , image) :
         y_top_left = y1 - ((y2-y1)/2)
         if y_top_left <0 : 
             y_top_left = 0
-        x_top_left = x1 - 25
+        x_top_left =max(0,x1 - 25)
         
         y_bottom_right = y2 + (2*(y2-y1))
-        x_bottom_right = x2 + 2.5*(x2-x_top_left)
+        #print('Diff in x is',x2-x_top_left)
+        x_bottom_right = x2 + 7*(x2-x_top_left)
             
         #print(x_top_left ,y_top_left  , x_bottom_right , y_bottom_right)
         
@@ -98,7 +99,78 @@ def cut_image(match_bottom_left , match_t , image) :
         
         y_top_right = int(y_top_right)
         x_top_right = int(x_top_right)
+                
         
+        return image[int(y_top_right):int(y1+30) , max(0,int(x1-40)):int(x_top_right)]
+
+
+
+def get_bounding_box(img):
         
+    # https://stackoverflow.com/questions/35854197/how-to-use-opencvs-connected-components-with-stats-in-python?fbclid=IwAR2oFmjaP_z7RTwvxh2hX86ChlZEvtY-MM8Qs2ybf2puftaFypbQiDk2veI
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (11,11))
+    close = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+    subt = cv2.subtract(close, img)
+    
+    src = np.copy(subt)
+    
+    ret, thresh = cv2.threshold(src,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    connectivity = 4  
+    output = cv2.connectedComponentsWithStats(thresh, connectivity, cv2.CV_32S)
+    
+    num_labels = output[0]
+    labels = output[1]
+    stats = output[2]
+    centroids = output[3]
+    
+    # looping on the centroids of the circles and writing on each of them a number
+
+    tmp = 1
+    delta = 0
+    mask = np.zeros(thresh.shape)
+    
+    max_length = 0
+    max_index = 1
+
+
+    for i in centroids[1:]:
         
-        return image[int(y_top_right):int(y1+10) , int(x1-10):int(x_top_right)]
+        left_most_x = stats[tmp][0]
+        upmost_y = stats[tmp][1]
+        width = stats[tmp][2]
+        height = stats[tmp][3]
+        area = stats[tmp][4]
+        
+        x1 = int(left_most_x)
+        y1 = int(upmost_y)
+        
+        x2 = int(x1 + width)
+        y2 = int(y1 + height)
+    
+        if(max(width, height) > max_length):
+            max_length = max(width, height)
+            max_index = tmp
+
+    
+        tmp += 1
+    
+    
+
+    left_most_x = stats[max_index][0]
+    upmost_y = stats[max_index][1] 
+    width = stats[max_index][2]
+    height = stats[max_index][3]
+        
+    y_begin = upmost_y
+    y_end = upmost_y + height
+    x_begin = left_most_x 
+    x_end = left_most_x+width
+
+ 
+    return img[y_begin:y_end, x_begin:x_end]
+
+
+## To get final image :-  img = get_bounding_box( cut_image(match_bottom , match_t , image ) )  
+## Where match_bottom , match are the two images in images folder 
+

@@ -1,3 +1,8 @@
 Flask
 gunicorn
 pillow
+matplotlib
+numpy
+statistics
+requests
+opencv-contrib-python-headless==3.4.0.14

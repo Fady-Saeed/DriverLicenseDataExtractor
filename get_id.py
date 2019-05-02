@@ -1,6 +1,3 @@
-import webbrowser as wb
-import webencodings
-import json
 import requests as rqs
 import numpy as np
 import matplotlib.pyplot as plt

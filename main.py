@@ -76,8 +76,8 @@ def match_images(match, img , mini) :
 
 def cut_image(match_bottom_left , match_t , image) : 
     #plt.imshow(image)
-    x1,y1 = match_images(match_bottom_left , image , 1)
-    x2,y2 = match_images(match_t,image , 0)
+    x1,y1 = match_images(match_bottom_left , image , 0)
+    x2,y2 = match_images(match_t,image , 1)
     
     if y1 < y2 : 
         #print('...More Processing ....')
@@ -114,8 +114,8 @@ def get_bounding_box(img):
     subt = cv2.subtract(close, img)
     
     src = np.copy(subt)
-    
-    ret, thresh = cv2.threshold(src,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    src = src.astype('uint8')
+    ret, thresh = cv2.threshold(src,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU)
     connectivity = 4  
     output = cv2.connectedComponentsWithStats(thresh, connectivity, cv2.CV_32S)
     

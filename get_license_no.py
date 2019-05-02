@@ -1,6 +1,3 @@
-import webbrowser as wb
-import webencodings
-import json
 import requests as rqs
 import numpy as np
 import matplotlib.pyplot as plt
@@ -54,7 +51,7 @@ def check_plate_text_and_no(plate_text , plate_no) :
 
 
 
-def get_no_and_text() : 
+def get_no_and_text(base64Image) : 
     '''
 	## Path to image 
 
@@ -64,20 +61,20 @@ def get_no_and_text() :
                'isOverlayRequired' : 'True' ,
                'language': 'ara' , 
                'detectOrientation' : 'True' , 
-               'scale':'True'
-              }
-    with open(path, 'rb') as f: 
-        r = rqs.post('https://api.ocr.space/parse/image',
-                     data=payload,
-                     files={path:f}
-                    )
-         d = r.json()
-        all = d['ParsedResults'][0]['ParsedText']
-        #print(len(d['ParsedResults'][0]['TextOverlay']['Lines']))
-        lis = all.split('\r\n')
-        plate_no = lis[0]
-        plate_text = lis[1]
-        #print(plate_no , plate_text)
-        _ , text , no = check_plate_text_and_no(plate_text,plate_no)
-        num = [no[-1],no[-2],no[-3]]
-        return text , num
+               'scale':'False',
+               'base64Image': base64Image
+              } 
+    r = rqs.post('https://api.ocr.space/parse/image',
+                    data=payload
+                )
+    d = r.json()
+    print(d)
+    all = d['ParsedResults'][0]['ParsedText']
+    #print(len(d['ParsedResults'][0]['TextOverlay']['Lines']))
+    lis = all.split('\r\n')
+    plate_no = lis[0]
+    plate_text = lis[1]
+    #print(plate_no , plate_text)
+    _ , text , no = check_plate_text_and_no(plate_text,plate_no)
+    num = [no[-1],no[-2],no[-3]]
+    return text , num

@@ -5,6 +5,7 @@ import cv2
 
 from main import get_bounding_box, cut_image
 from get_license_no import get_no_and_text
+from get_id import get_id
 
 app = Flask(__name__)
 
@@ -51,6 +52,39 @@ def GetCarLicenseDetails():
 		# 	response.status_code = 200
 		# 	return response
 
+@app.route('/driver', methods = ['GET','POST'])
+def GetDriverLicenseDetails():
+	if request.method == "GET":
+		return 'GET Request is not supported, You should use POST Request to uplaod the \"image\" of the Driver\'s License'
+	elif request.method == "POST":
+		# try: 
+		image = data_uri_to_cv2_img(request.form["image"])
+		
+		# START -- Call the Image Processing algorithm
+		image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+		nationalID = get_id(image)
+		# END 	-- Call the Image Processing algorithm
+		
+		payload = {
+			'nationalID': nationalID
+		}
+		data = {
+			'type': 'success',
+			'message': 'Data retrieved successfully',
+			'payload': payload,
+		}
+		response = jsonify(data)
+		response.status_code = 200
+
+		return response
+		# except:
+		# 	data = {
+		# 		'type': 'error',
+		# 		'message': 'An error occurred while retrieving the data'
+		# 	}
+		# 	response = jsonify(data)
+		# 	response.status_code = 200
+		# 	return response
 
 def data_uri_to_cv2_img(uri):
 	nparr = np.fromstring(base64.b64decode(uri), np.uint8)

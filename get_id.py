@@ -14,7 +14,7 @@ import statistics as sts
 
 
 
-def get_id() :
+def get_id(base64Image) :
     '''
     Put path to image in path
     ''' 
@@ -23,19 +23,16 @@ def get_id() :
                'isOverlayRequired' : 'True' ,
                'language': 'eng' , 
                'detectOrientation' : 'True' , 
-               'scale':'True'
+               'scale':'True',
+               'base64Image': base64Image
               }
-    with open(path, 'rb') as f: 
-        r = rqs.post('https://api.ocr.space/parse/image',
-                     data=payload,
-                     files={path:f}
-                    )
-        d = r.json()
-        print(d)
-        print(d['ParsedResults'][0]['ParsedText'])
-        lis = d['ParsedResults'][0]['ParsedText'].split('\r\n')
-        id_no = lis[0]
-        print(id_no)
-        return id_no
-    
-get_id()
+    r = rqs.post('https://api.ocr.space/parse/image',
+                    data=payload
+                )
+    d = r.json()
+    print(d)
+    print(d['ParsedResults'][0]['ParsedText'])
+    lis = d['ParsedResults'][0]['ParsedText'].split('\r\n')
+    id_no = lis[0]
+    print(id_no)
+    return id_no

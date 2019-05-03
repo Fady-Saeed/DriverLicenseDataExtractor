@@ -12,9 +12,7 @@ def get_bounding_box(img):
     close = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
     subt = cv2.subtract(close, img)
     
-    src = np.copy(subt)
-    
-    ret, thresh = cv2.threshold(src,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    ret, thresh = cv2.threshold(subt,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     connectivity = 4  
     output = cv2.connectedComponentsWithStats(thresh, connectivity, cv2.CV_32S)
     

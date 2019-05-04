@@ -27,7 +27,7 @@ def match_images(match, img , mini) :
         if match1.distance < 0.75*match2.distance : 
             best_matches.append(match1)
     if len(best_matches)==0 : 
-        best_matches = matches
+	    best_matches = matches
 
     ## get X,Y
     list_kp1 = []

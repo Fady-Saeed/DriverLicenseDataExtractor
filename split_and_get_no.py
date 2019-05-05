@@ -7,13 +7,24 @@ from PIL import Image
 
 def english_to_arabic(num) : 
     english_numbers=['0','1','2','3','4','5','6','7','8','9']
-    arabic_numbers = ['٠' ,'١' , ' ٢' , '٣' , '٤' , '٥' , '٦' , '٧' ,'٨' , '٩' ]
+    arabic_numbers = ['٠' ,'١' , '٢' , '٣' , '٤' , '٥' , '٦' , '٧' ,'٨' , '٩' ]
     new_lst=[]
     for i in num : 
         y = english_numbers.index(i)
         new_lst.append(arabic_numbers[y])
     return new_lst
 
+def arabic_to_english(num) : 
+    english_numbers=['0','1','2','3','4','5','6','7','8','9']
+    arabic_numbers = ['٠' ,'١' , '٢' , '٣' , '٤' , '٥' , '٦' , '٧' ,'٨' , '٩' ]
+    result = ""
+    for i in num : 
+        try :
+            y = arabic_numbers.index(i)
+            result += english_numbers[y]
+        except ValueError:
+            result += i
+    return result
 
 
 def split(img) : 

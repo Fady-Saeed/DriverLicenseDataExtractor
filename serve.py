@@ -29,35 +29,24 @@ def GetCarLicenseDetails():
 		letters, digits = get_no_and_text(image)
 		gc.collect()
 		# END 	-- Call the Image Processing algorithm
-		
-		payload = {
-			'firstLetter': letters[0],
-			'secondLetter': letters[1],
-			'thirdLetter': letters[2],
-			'digits': digits
-		}
-		data = {
-			'type': 'success',
-			'message': 'Data retrieved successfully',
-			'payload': payload,
-		}
-		response = jsonify(data)
-		response.status_code = 200
-		
-		gc.collect()
-
-		return response
+		if len(letters) > 0 and len(digits) > 0:
+			payload = {
+				'letters': letters,
+				'digits': digits
+			}
+			data = {
+				'type': 'success',
+				'message': 'Data retrieved successfully',
+				'payload': payload,
+			}
+			response = jsonify(data)
+			response.status_code = 200
+			gc.collect()
+			return response
+		else:
+			return getErrorResponse()
 		# except:
-		# 	data = {
-		# 		'type': 'error',
-		# 		'message': 'An error occurred while retrieving the data'
-		# 	}
-		# 	response = jsonify(data)
-		# 	response.status_code = 200
-		
-		# 	gc.collect()
-
-		# 	return response
+		# 	return getErrorResponse()
 
 @app.route('/driver', methods = ['GET','POST'])
 def GetDriverLicenseDetails():
@@ -88,18 +77,21 @@ def GetDriverLicenseDetails():
 
 		return response
 		# except:
-		# 	data = {
-		# 		'type': 'error',
-		# 		'message': 'An error occurred while retrieving the data'
-		# 	}
-		# 	response = jsonify(data)
-		# 	response.status_code = 200
-		# 	return response
+		# 	return getErrorResponse()
 
 def data_uri_to_cv2_img(uri):
 	nparr = np.fromstring(base64.b64decode(uri), np.uint8)
 	img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 	return img
+
+def getErrorResponse():
+	data = {
+		'type': 'error',
+		'message': 'An error occurred while retrieving the data'
+	}
+	response = jsonify(data)
+	response.status_code = 500
+	return response
 
 if __name__ == '__main__':
     app.run()

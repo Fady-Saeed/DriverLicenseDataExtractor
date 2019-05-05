@@ -19,7 +19,8 @@ def english_to_arabic(num) :
 
 def split(img) : 
 	#img is GrayScale image
-	num_img = img[:,int(0:img.shape[1])]
+	num_img  = img[:,10:int(img.shape[1]/2)]
+	text_img = img[:,int((img.shape[1]/2)+10):img.shape[1]]
 	numbers = pst.image_to_string( num_img , lang='ara_number')
 	return english_to_arabic(list(numbers))
 

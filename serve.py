@@ -25,19 +25,16 @@ def GetCarLicenseDetails():
 		gc.collect()
 		image = cv2.pyrUp(image)
 		gc.collect()
-		retval, image = cv2.imencode('.jpg', image)
-		base64Image = base64.b64encode(image).decode()
-		base64Image = 'data:image/jpg;base64,{}'.format(base64Image)
 		# print(base64Image)
-		text, num = get_no_and_text(base64Image)
+		letters, digits = get_no_and_text(image)
 		gc.collect()
 		# END 	-- Call the Image Processing algorithm
 		
 		payload = {
-			'firstLetter': text[0],
-			'secondLetter': text[1],
-			'thirdLetter': text[2],
-			'digits': num[2] + "" + num[1] + "" + num[0]
+			'firstLetter': letters[0],
+			'secondLetter': letters[1],
+			'thirdLetter': letters[2],
+			'digits': digits
 		}
 		data = {
 			'type': 'success',

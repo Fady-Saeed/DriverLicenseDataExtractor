@@ -2,8 +2,9 @@ import requests as rqs
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-import statistics as sts
-
+import pytesseract
+import base64
+from split_and_get_no import split
 
 
 f = lambda text ,number : text if not number else number 
@@ -51,12 +52,23 @@ def check_plate_text_and_no(plate_text , plate_no) :
 
 
 
-def get_no_and_text(base64Image) : 
+def get_no_and_text(image) : 
     '''
 	## Path to image 
 
 	path =  
     '''
+
+    numImg, lettersImg = split(image)
+
+    pytesseract.pytesseract.tesseract_cmd = r'/app/.apt/usr/bin/tesseract'
+    digits = pytesseract.image_to_string(numImg, lang='ara_number')
+    print("Digits : " + digits)
+
+    _, lettersImg = cv2.imencode('.jpg', lettersImg)
+    base64Image = base64.b64encode(lettersImg).decode()
+    base64Image = 'data:image/jpg;base64,{}'.format(base64Image)
+    
     payload = {'apikey': '310081fb4188957' ,
                'isOverlayRequired' : 'True' ,
                'language': 'ara' , 
@@ -68,13 +80,8 @@ def get_no_and_text(base64Image) :
                     data=payload
                 )
     d = r.json()
+    print("Ocr Space JSON :")
     print(d)
-    all = d['ParsedResults'][0]['ParsedText']
-    #print(len(d['ParsedResults'][0]['TextOverlay']['Lines']))
-    lis = all.split('\r\n')
-    plate_no = lis[0]
-    plate_text = lis[1]
-    #print(plate_no , plate_text)
-    _ , text , no = check_plate_text_and_no(plate_text,plate_no)
-    num = [no[-1],no[-2],no[-3]]
-    return text , num
+    letters = d['ParsedResults'][0]['ParsedText']
+    letters = letters.replace(" ", "")
+    return letters, digits

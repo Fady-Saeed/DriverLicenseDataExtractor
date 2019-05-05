@@ -1,4 +1,3 @@
-import pytesseract as pst
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
@@ -22,9 +21,6 @@ def split(img) :
 	num_img  = img[:,10:int(img.shape[1]/2)]
 	text_img = img[:,int((img.shape[1]/2)+10):img.shape[1]]
 	return num_img, text_img
-
-def get_number(num_img) :
-    return pst.image_to_string( num_img , lang='ara_number')
 
 
 ## Call split(img) to get car numbers
